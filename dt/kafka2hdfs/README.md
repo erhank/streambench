@@ -14,15 +14,15 @@ Kafka Setup
 
 ## Creating the Kafka topics
     
-    bin/kafka-topics.sh --create --zookeeper node0:2181 --replication-factor 2 --partition 2 --topic AmlaKafka
+    bin/kafka-topics.sh --create --zookeeper node0:2181 --replication-factor 2 --partition 2 --topic streambench1
     
 ## Inspect data in topics
 
-    bin/kafka-console-consumer.sh --zookeeper node0:2181 --topic AmlaKafka
+    bin/kafka-console-consumer.sh --zookeeper node0:2181 --topic streambench1
 
 ## Increase the partition
 
-    bin/kafka-topics.sh --alter --zookeeper node0:2181 --replication-factor 2 --partition 3 --topic AmlaKafka
+    bin/kafka-topics.sh --alter --zookeeper node0:2181 --replication-factor 2 --partition 3 --topic streambench1
 
 
 Managing DT App
@@ -40,7 +40,7 @@ Example:
   <!-- kafka Ingestion application -->
   <property>
     <name>dt.operator.KafkaProducerOperator.prop.topic</name>
-    <value>AmlaKafka</value>
+    <value>streambench1</value>
   </property>
   <property>
     <name>dt.operator.KafkaProducerOperator.prop.brokerList</name>
@@ -52,7 +52,7 @@ Example:
   </property>
   <property>
     <name>dt.operator.KafkaIngestionConsumerOperator.prop.topic</name>
-    <value>AmlaKafka</value>
+    <value>streambench1</value>
   </property>
   <property>
     <name>dt.operator.KafkaIngestionConsumerOperator.prop.brokerSet</name>
@@ -77,7 +77,7 @@ Example:
 ```
 
 ### Dynamically adjust the partition by adding kafka partition (dynamic deletion is not officially support in kafka)
-    bin/kafka-topics.sh --alter --zookeeper node0:2181 --replication-factor 2 --partition 3 --topic AmlaKafka
+    bin/kafka-topics.sh --alter --zookeeper node0:2181 --replication-factor 2 --partition 3 --topic streambench1
 
 
 Design
@@ -89,6 +89,6 @@ Design
 
 ## Consumer Operator
    * PartitionableKafkaInputOperator directly extends AbstractPartitionableKafkaInputOperator(from Malhar library)
-   * If you set the operator property "strategy" to "one_to_one"(case insensitive) The stram will dynamically allocate one operator partition for each kafka pertition. (You can dynamically change the kafka partition to see the partition change)
+   * If you set the operator property "strategy" to "one_to_one"(case insensitive) The engine will dynamically allocate one operator partition for each kafka pertition. (You can dynamically change the kafka partition to see the partition change)
    * If you set the operator property  "strategy" to "one_to_many"(case insensitive) and set "msgRateUpperBound"/"byteRateUpperBound"(limit of msg/s, bytes/s per partition). It will dynamically allocate as few partitions as possible without breaking the limit (You can change the throughput of the Output Application to see the partition change)
 

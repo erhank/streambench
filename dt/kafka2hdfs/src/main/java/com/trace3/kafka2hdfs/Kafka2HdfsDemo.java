@@ -15,19 +15,19 @@ import com.datatorrent.contrib.kafka.PartitionableKafkaSinglePortStringInputOper
 import com.datatorrent.contrib.kafka.SimpleKafkaConsumer;
 import com.datatorrent.lib.stream.DevNullCounter;
 
-@ApplicationAnnotation(name="KafkaIngestionDemo")
+@ApplicationAnnotation(name="Kafka2HdfsDemo")
 public class Kafka2HdfsDemo implements StreamingApplication
 {
   @Override
   public void populateDAG(DAG dag, Configuration conf)
   {
     // topic is set via property file
-    PartitionableKafkaSinglePortStringInputOperator input = dag.addOperator("KafkaConsumerOperator", new PartitionableKafkaSinglePortStringInputOperator());
+    PartitionableKafkaSinglePortStringInputOperator input = dag.addOperator("KafkaInput", new PartitionableKafkaSinglePortStringInputOperator());
     KafkaConsumer consumer = new SimpleKafkaConsumer(null, 10000, 100000, "test_kafka_autop_client", new HashSet<Integer>());
     input.setTuplesBlast(1024 * 1024); // maximum number of events to emit in one go
     input.setConsumer(consumer);
     input.setBrokerSet("localhost:9092");
-    input.setTopic("trace3.streambench1");
+    input.setTopic("streambench1");
 
     DevNullCounter<Object> counter = dag.addOperator("Counter", new DevNullCounter<Object>());
     dag.addStream("Messages", input.outputPort, counter.data).setLocality(Locality.CONTAINER_LOCAL);
